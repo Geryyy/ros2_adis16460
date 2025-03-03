@@ -94,7 +94,7 @@ private:
     void readAndPublishIMU0Data() {
         IMUData data0;
         if (!imu0->readData(data0)) {
-            RCLCPP_WARN(this->get_logger(), "Failed to read IMU data.");
+            // RCLCPP_WARN(this->get_logger(), "Failed to read IMU data.");
             return;
         }
 
@@ -120,7 +120,7 @@ private:
     void readAndPublishIMU1Data() {
         IMUData data1;
         if (!imu1->readData(data1)) {
-            RCLCPP_WARN(this->get_logger(), "Failed to read IMU data.");
+            // RCLCPP_WARN(this->get_logger(), "Failed to read IMU data.");
             return;
         }
 

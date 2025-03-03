@@ -220,7 +220,7 @@ class ADIS16460 {
             for (int i = 0; i < 18; i++) checksum_calc += data[i];
     
             if (checksum_received != checksum_calc) {
-                std::cerr << "------------->Checksum error!\n";
+                // std::cerr << "------------->Checksum error!\n";
                 return false;
             }
     

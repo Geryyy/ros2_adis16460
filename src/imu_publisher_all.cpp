@@ -95,7 +95,7 @@ private:
     void readAndPublishIMUData(std::shared_ptr<ADIS16460> imu, rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr publisher, const std::string &frame_id) {
         IMUData data;
         if (!imu->readData(data)) {
-            RCLCPP_WARN(this->get_logger(), "Failed to read IMU data from %s.", frame_id.c_str());
+            // RCLCPP_WARN(this->get_logger(), "Failed to read IMU data from %s.", frame_id.c_str());
             return;
         }
 
