@@ -60,17 +60,17 @@ public:
 
         // Reset and configure the IMU
         imu0->reset();
-        imu0->setup(true);
+        imu0->setup(false);
         usleep(1000);
         imu1->reset();
-        imu1->setup(false);
+        imu1->setup(true);
 
         // Create a publisher for the IMU data
-        imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/imu0/data", 10);
-        imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/imu1/data", 10);
+        imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev0", 10);
+        imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev1", 10);
 
         // Set up ISR for rising edge on DR1_PIN
-        wiringPiISR(DR0_PIN, INT_EDGE_RISING, &IMUPublisher::imu_handler_static); 
+        wiringPiISR(DR1_PIN, INT_EDGE_RISING, &IMUPublisher::imu_handler_static); 
 
         instance = this;  // Set the static instance pointer to this object
         RCLCPP_INFO(this->get_logger(), "IMU Publisher started.");
@@ -86,6 +86,8 @@ public:
         } else {
             instance->readAndPublishIMUData(instance->imu0, instance->imu0_pub, "imu0");
         }
+
+        // instance->readAndPublishIMUData(instance->imu1, instance->imu1_pub, "imu1");
 
         // Toggle the IMU flag for the next rising edge
         instance->toggle_flag = !(instance->toggle_flag);

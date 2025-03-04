@@ -49,6 +49,12 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
 install(TARGETS imu_publisher
   DESTINATION lib/${PROJECT_NAME})
 
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 # Run linting if testing
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
