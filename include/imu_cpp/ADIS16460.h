@@ -1,5 +1,3 @@
-
-
 #ifndef ADIS16460_H
 #define ADIS16460_H
 
@@ -220,7 +218,7 @@ class ADIS16460 {
             for (int i = 0; i < 18; i++) checksum_calc += data[i];
     
             if (checksum_received != checksum_calc) {
-                // std::cerr << "------------->Checksum error!\n";
+                std::cerr << "------------->Checksum error!\n";
                 return false;
             }
     
@@ -231,44 +229,3 @@ class ADIS16460 {
 
 
 #endif // ADIS16460_H
-
-
-// bool writeRegister(uint8_t reg, uint16_t value) {
-//             uint8_t send[4];
-//             uint16_t addresse = ((reg & 0x7F) | 0x80) << 8;   // Write command (MSB set)
-//             uint16_t lowWord = (addresse | (value & 0xFF));
-//             uint16_t highWord = ((addresse | 0x100) | ((value >> 8) & 0xFF));
-
-//             send[3] = (highWord >> 8);
-//             send[2] = (highWord & 0xFF);
-//             send[1] = (lowWord >> 8);
-//             send[0] = (lowWord & 0xFF);
-//             // send[1] = (value & 0xFF); // Low byte
-//             // send[2] = (reg + 1) | 0x80; // Next byte address
-
-
-            
-//             // send[3] = (value >> 8); // High byte
-
-//             std::cout << "send[0]: 0x" << std::hex << static_cast<int>(send[0]) << std::endl;
-//             std::cout << "send[1]: 0x" << std::hex << static_cast<int>(send[1]) << std::endl;
-//             std::cout << "send[2]: 0x" << std::hex << static_cast<int>(send[2]) << std::endl;
-//             std::cout << "send[3]: 0x" << std::hex << static_cast<int>(send[3]) << std::endl;
-
-//             std::cout << "Writing to register 0x" << std::hex << (int)reg << " with value 0x" << value << std::endl;
-
-//             struct spi_ioc_transfer tr{};
-//             tr.tx_buf = (unsigned long)send;
-//             tr.rx_buf = 0;
-//             tr.len = 4;
-//             tr.speed_hz = SPI_SPEED;
-//             tr.bits_per_word = 8;
-
-//             if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &tr) < 0) {
-//                 perror("SPI write failed");
-//                 digitalWrite(cs_pin, HIGH);
-//                 return false;
-//             }
-
-//             return true;
-//         }

@@ -66,8 +66,16 @@ public:
         imu1->setup(true);
 
         // Create a publisher for the IMU data
-        imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev0", 10);
-        imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev1", 10);
+        // imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev0", rclcpp::SensorDataQoS());
+        // imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev1", rclcpp::SensorDataQoS());
+
+        rclcpp::QoS custom_qos = rclcpp::QoS(rclcpp::KeepLast(1))
+                                     .reliability(RMW_QOS_POLICY_RELIABILITY_BEST_EFFORT)
+                                     .durability(RMW_QOS_POLICY_DURABILITY_VOLATILE)
+                                     .history(RMW_QOS_POLICY_HISTORY_KEEP_LAST);
+
+        imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev0", custom_qos);
+        imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev1", custom_qos);
 
         // Set up ISR for rising edge on DR1_PIN
         wiringPiISR(DR1_PIN, INT_EDGE_RISING, &IMUPublisher::imu_handler_static); 
@@ -100,6 +108,11 @@ private:
             // RCLCPP_WARN(this->get_logger(), "Failed to read IMU data from %s.", frame_id.c_str());
             return;
         }
+
+        // RCLCPP_INFO(this->get_logger(), "[%s] Gyro: [%.4f, %.4f, %.4f] Accel: [%.4f, %.4f, %.4f]", 
+        //             frame_id.c_str(), 
+        //             data.x_gyro, data.y_gyro, data.z_gyro, 
+        //             data.x_accel, data.y_accel, data.z_accel);
 
         auto imu_msg = sensor_msgs::msg::Imu();
         imu_msg.header.stamp = this->get_clock()->now();
