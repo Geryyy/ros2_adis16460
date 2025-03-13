@@ -41,9 +41,6 @@ private:
     IMUData imu_data_0;
     IMUData imu_data_1;
 
-    // Mutex for data protection
-    std::mutex imu_data_mutex;
-
     static IMUPublisher* instance;  // Static instance pointer
     bool toggle_flag;  // Toggle between IMU0 and IMU1
 
@@ -60,7 +57,7 @@ public:
         this->declare_parameter<std::string>("imu_frame", "imu_link");
         imu_frame = this->get_parameter("imu_frame").as_string();
 
-        
+        pinMode(SYNC_PIN, OUTPUT);
 
         // Create the IMU object
         imu0 = std::make_shared<ADIS16460>(SPI_DEVICE_0, DR0_PIN, RST0_PIN, CS0_PIN);
@@ -71,46 +68,33 @@ public:
         imu0->setup(false);
         usleep(1000);
         imu1->reset();
-        imu1->setup(true);
-
-        // Create a publisher for the IMU data
-        // imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev0", 10);
-        // imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev1", 10);
+        imu1->setup(false);
         
         imu0_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev0", rclcpp::SensorDataQoS());
         imu1_pub = this->create_publisher<sensor_msgs::msg::Imu>("/adis16460_dev1", rclcpp::SensorDataQoS());
         
-        // Set up ISR for rising edge on DR1_PIN
-        wiringPiISR(DR1_PIN, INT_EDGE_RISING, &IMUPublisher::imu_handler_static);
-
-        instance = this;  // Set the static instance pointer to this object
         RCLCPP_INFO(this->get_logger(), "IMU Publisher started.");
 
         // Timer for publishing IMU data periodically
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(1), 
+            std::chrono::milliseconds(2), 
             std::bind(&IMUPublisher::publishIMUData, this)
         );
     }
 
     // Static handler function for rising edge of DR1_PIN
-    static void imu_handler_static() {
-        if (instance == nullptr) {
-            return;
-        }
+    // static void imu_handler_static() {
 
-        // Lock the mutex to update the IMU data safely
-        std::lock_guard<std::mutex> lock(instance->imu_data_mutex);
 
-        if (instance->toggle_flag) {
-            instance->readIMUData(instance->imu1, instance->imu_data_1);
-        } else {
-            instance->readIMUData(instance->imu0, instance->imu_data_0);
-        }
+    //     if (instance->toggle_flag) {
+    //         instance->readIMUData(instance->imu1, instance->imu_data_1);
+    //     } else {
+    //         instance->readIMUData(instance->imu0, instance->imu_data_0);
+    //     }
 
-        // Toggle the IMU flag for the next rising edge
-        instance->toggle_flag = !(instance->toggle_flag);
-    }
+    //     // Toggle the IMU flag for the next rising edge
+    //     instance->toggle_flag = !(instance->toggle_flag);
+    // }
 
 private:
     void readIMUData(std::shared_ptr<ADIS16460> imu, IMUData &data) {
@@ -120,8 +104,18 @@ private:
     }
 
     void publishIMUData() {
-        // Lock the mutex to safely access the IMU data
-        std::lock_guard<std::mutex> lock(imu_data_mutex);
+        // trigger data conversion
+        digitalWrite(SYNC_PIN, HIGH);
+        usleep(25);
+        digitalWrite(SYNC_PIN, LOW);
+
+        usleep(638);
+        // read imu0
+        readIMUData(imu0, imu_data_0);
+        readIMUData(imu1, imu_data_1);
+
+        // read imu1
+
 
         // Publish IMU 0 data
         auto imu_msg0 = sensor_msgs::msg::Imu();
