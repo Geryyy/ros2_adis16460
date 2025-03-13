@@ -17,6 +17,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_library(WIRINGPI_LIB wiringPi)
+# find_package(concurent REQURIED)
 
 # Add executable
 add_executable(imu_publisher src/imu_publisher_all.cpp)
@@ -29,6 +30,11 @@ target_include_directories(imu_publisher PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
+
+# Add include path for concurrentqueue
+include_directories(${CMAKE_SOURCE_DIR}/src/concurrentqueue)
+
+
 
 # Link dependencies with proper libraries
 target_link_libraries(imu_publisher

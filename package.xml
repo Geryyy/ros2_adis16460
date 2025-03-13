@@ -15,6 +15,8 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>wiringpi</depend>
+  <depend>concurrentqueue</depend>
+
 
   <!-- Launch file support -->
   <depend>launch</depend>
