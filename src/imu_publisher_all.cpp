@@ -97,9 +97,13 @@ public:
     // }
 
 private:
-    void readIMUData(std::shared_ptr<ADIS16460> imu, IMUData &data) {
+    int readIMUData(std::shared_ptr<ADIS16460> imu, IMUData &data) {
         if (!imu->readData(data)) {
             RCLCPP_WARN(this->get_logger(), "Failed to read IMU data.");
+            return -1;
+        }
+        else{
+            return 0;
         }
     }
 
@@ -109,10 +113,19 @@ private:
         usleep(25);
         digitalWrite(SYNC_PIN, LOW);
 
-        usleep(638);
+        usleep(700);
         // read imu0
-        readIMUData(imu0, imu_data_0);
-        readIMUData(imu1, imu_data_1);
+        int imu_status = 0;
+        imu_status += readIMUData(imu0, imu_data_0);
+        usleep(10);
+        imu_status += readIMUData(imu1, imu_data_1);
+
+        if(imu_status != 0){
+            imu0->reset();
+            imu1->reset();
+            RCLCPP_INFO(this->get_logger(), "Reset IMUs.");
+            return;
+        }
 
         // read imu1
 
