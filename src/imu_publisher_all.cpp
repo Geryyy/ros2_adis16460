@@ -122,7 +122,10 @@ private:
 
         if(imu_status != 0){
             imu0->reset();
+            imu0->setup(false);
+            usleep(1000);
             imu1->reset();
+            imu1->setup(false);
             RCLCPP_INFO(this->get_logger(), "Reset IMUs.");
             return;
         }
