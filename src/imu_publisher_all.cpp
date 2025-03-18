@@ -68,23 +68,23 @@ public:
         // this->declare_parameter<std::string>("imu_frame", "imu_link");
         // imu_frame = this->get_parameter("imu_frame").as_string();
 
-        this->declare_parameter<std::string>("bias0_angvel_x", "bias0_angvel_x");
+        this->declare_parameter<double>("bias0_angvel_x", 0.0);
         bias0_angvel_x = this->get_parameter("bias0_angvel_x").as_double();
 
-        this->declare_parameter<std::string>("bias0_angvel_y", "bias0_angvel_y");
+        this->declare_parameter<double>("bias0_angvel_y", 0.0);
         bias0_angvel_y = this->get_parameter("bias0_angvel_y").as_double();
 
-        this->declare_parameter<std::string>("bias0_angvel_z", "bias0_angvel_z");
+        this->declare_parameter<double>("bias0_angvel_z", 0.0);
         bias0_angvel_y = this->get_parameter("bias0_angvel_z").as_double(); 
 
 
-        this->declare_parameter<std::string>("bias1_angvel_x", "bias1_angvel_x");
+        this->declare_parameter<double>("bias1_angvel_x", 0.0);
         bias1_angvel_x = this->get_parameter("bias1_angvel_x").as_double();
 
-        this->declare_parameter<std::string>("bias1_angvel_y", "bias1_angvel_y");
+        this->declare_parameter<double>("bias1_angvel_y", 0.0);
         bias1_angvel_y = this->get_parameter("bias1_angvel_y").as_double();
 
-        this->declare_parameter<std::string>("bias1_angvel_z", "bias1_angvel_z");
+        this->declare_parameter<double>("bias1_angvel_z", 0.0);
         bias1_angvel_y = this->get_parameter("bias1_angvel_z").as_double();            
 
 
