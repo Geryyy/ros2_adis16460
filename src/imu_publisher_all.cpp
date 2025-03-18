@@ -75,7 +75,7 @@ public:
         bias0_angvel_y = this->get_parameter("bias0_angvel_y").as_double();
 
         this->declare_parameter<double>("bias0_angvel_z", 0.0);
-        bias0_angvel_y = this->get_parameter("bias0_angvel_z").as_double(); 
+        bias0_angvel_z = this->get_parameter("bias0_angvel_z").as_double(); 
 
 
         this->declare_parameter<double>("bias1_angvel_x", 0.0);
@@ -85,7 +85,10 @@ public:
         bias1_angvel_y = this->get_parameter("bias1_angvel_y").as_double();
 
         this->declare_parameter<double>("bias1_angvel_z", 0.0);
-        bias1_angvel_y = this->get_parameter("bias1_angvel_z").as_double();            
+        bias1_angvel_z = this->get_parameter("bias1_angvel_z").as_double();    
+
+        RCLCPP_INFO(this->get_logger(), "IMU0 angel. vel. bias: [%f %f %f].", bias0_angvel_x, bias0_angvel_y, bias0_angvel_z);
+        RCLCPP_INFO(this->get_logger(), "IMU1 angel. vel. bias: [%f %f %f].", bias1_angvel_x, bias1_angvel_y, bias1_angvel_z);                
 
 
         pinMode(SYNC_PIN, OUTPUT);
