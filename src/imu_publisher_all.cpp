@@ -37,6 +37,14 @@ private:
 
     std::string imu_frame;
 
+    double bias0_angvel_x;
+    double bias0_angvel_y;
+    double bias0_angvel_z;
+
+    double bias1_angvel_x;
+    double bias1_angvel_y;
+    double bias1_angvel_z;
+
     // IMU data storage
     IMUData imu_data_0;
     IMUData imu_data_1;
@@ -56,6 +64,29 @@ public:
 
         this->declare_parameter<std::string>("imu_frame", "imu_link");
         imu_frame = this->get_parameter("imu_frame").as_string();
+
+        // this->declare_parameter<std::string>("imu_frame", "imu_link");
+        // imu_frame = this->get_parameter("imu_frame").as_string();
+
+        this->declare_parameter<std::string>("bias0_angvel_x", "bias0_angvel_x");
+        bias0_angvel_x = this->get_parameter("bias0_angvel_x").as_double();
+
+        this->declare_parameter<std::string>("bias0_angvel_y", "bias0_angvel_y");
+        bias0_angvel_y = this->get_parameter("bias0_angvel_y").as_double();
+
+        this->declare_parameter<std::string>("bias0_angvel_z", "bias0_angvel_z");
+        bias0_angvel_y = this->get_parameter("bias0_angvel_z").as_double(); 
+
+
+        this->declare_parameter<std::string>("bias1_angvel_x", "bias1_angvel_x");
+        bias1_angvel_x = this->get_parameter("bias1_angvel_x").as_double();
+
+        this->declare_parameter<std::string>("bias1_angvel_y", "bias1_angvel_y");
+        bias1_angvel_y = this->get_parameter("bias1_angvel_y").as_double();
+
+        this->declare_parameter<std::string>("bias1_angvel_z", "bias1_angvel_z");
+        bias1_angvel_y = this->get_parameter("bias1_angvel_z").as_double();            
+
 
         pinMode(SYNC_PIN, OUTPUT);
 
@@ -82,19 +113,6 @@ public:
         );
     }
 
-    // Static handler function for rising edge of DR1_PIN
-    // static void imu_handler_static() {
-
-
-    //     if (instance->toggle_flag) {
-    //         instance->readIMUData(instance->imu1, instance->imu_data_1);
-    //     } else {
-    //         instance->readIMUData(instance->imu0, instance->imu_data_0);
-    //     }
-
-    //     // Toggle the IMU flag for the next rising edge
-    //     instance->toggle_flag = !(instance->toggle_flag);
-    // }
 
 private:
     int readIMUData(std::shared_ptr<ADIS16460> imu, IMUData &data) {
@@ -138,9 +156,9 @@ private:
         imu_msg0.header.stamp = this->get_clock()->now();
         imu_msg0.header.frame_id = "imu0";
 
-        imu_msg0.angular_velocity.x = imu_data_0.x_gyro;
-        imu_msg0.angular_velocity.y = imu_data_0.y_gyro;
-        imu_msg0.angular_velocity.z = imu_data_0.z_gyro;
+        imu_msg0.angular_velocity.x = imu_data_0.x_gyro - bias0_angvel_x;
+        imu_msg0.angular_velocity.y = imu_data_0.y_gyro - bias0_angvel_y;
+        imu_msg0.angular_velocity.z = imu_data_0.z_gyro - bias0_angvel_z;
 
         imu_msg0.linear_acceleration.x = imu_data_0.x_accel;
         imu_msg0.linear_acceleration.y = imu_data_0.y_accel;
@@ -152,9 +170,9 @@ private:
         imu_msg1.header.stamp = this->get_clock()->now();
         imu_msg1.header.frame_id = "imu1";
 
-        imu_msg1.angular_velocity.x = imu_data_1.x_gyro;
-        imu_msg1.angular_velocity.y = imu_data_1.y_gyro;
-        imu_msg1.angular_velocity.z = imu_data_1.z_gyro;
+        imu_msg1.angular_velocity.x = imu_data_1.x_gyro - bias1_angvel_x;
+        imu_msg1.angular_velocity.y = imu_data_1.y_gyro - bias1_angvel_y;
+        imu_msg1.angular_velocity.z = imu_data_1.z_gyro - bias1_angvel_z;
 
         imu_msg1.linear_acceleration.x = imu_data_1.x_accel;
         imu_msg1.linear_acceleration.y = imu_data_1.y_accel;
